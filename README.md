@@ -2,6 +2,8 @@
 
 Chat with PyMOL adds a compact natural-language assistant directly to the PyMOL interface. It can inspect the active session and perform PyMOL operations from typed or spoken requests while keeping the molecular viewer as the main workspace.
 
+![Chat with PyMOL controlling a human hemoglobin structure](docs/images/chat-with-pymol.png)
+
 ## Install on macOS
 
 The packaged application is the easiest installation method. It supports Apple Silicon and Intel Macs and does not require Terminal commands or Python package installation.
