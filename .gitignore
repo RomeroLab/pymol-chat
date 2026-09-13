@@ -1,0 +1,16 @@
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+dist/
+build/
+outputs/
+work/
+.DS_Store
+*.pdb
+*.cif
+*.mmcif
+*.pse
+voice_helper/.module-cache/
+voice_helper/PyMOLChatVoice.app/Contents/MacOS/PyMOLChatVoice
+voice_helper/PyMOLChatVoice.app/Contents/_CodeSignature/
