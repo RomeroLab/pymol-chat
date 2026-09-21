@@ -33,6 +33,20 @@ Open a structure using PyMOL's normal controls, then type a request and press Re
 
 Click the microphone once to speak. Recording stops automatically after a short pause. The **⋯** menu contains API key settings and an optional command log.
 
+Keys saved through **⋯ → API Key Settings** are stored in macOS Keychain and take priority over `OPENAI_API_KEY` or a development `.env` file, including after restarting PyMOL. Environment configuration is used only when no saved key is readable. The replacement field stays blank for privacy; a green status dot indicates that a key is loaded, not that it has been validated by OpenAI.
+
+### Spoken replies
+
+Replies can be read aloud with **Marin**, an AI-generated OpenAI voice using `gpt-4o-mini-tts`. Reply text is sent to OpenAI for speech generation, with additional API usage charges. Audio streams directly to the speakers without saving a recording, with a 300 ms startup buffer for smoother playback. Turn **⋯ → Spoken Replies** off to mute them, or choose **Stop Speaking** to interrupt a reply. Starting another request or the microphone also stops playback. Your mute preference is remembered. Speech errors leave the written reply available in chat.
+
+The previous release, v1.0.0, remains available on the GitHub releases page.
+
+Simple visual changes can now use a prepared confirmation immediately after successful execution, skipping the follow-up model request. This shortcut requires one tool call, a nonempty-selection assertion, supported direct visual commands, and no diagnostic output. Measurements, interpretation, errors, and more complex operations still use the normal review loop. Tool results and the confirmation are retained for the next conversation turn.
+
+Visual inspection is disabled: the chat agent does not capture or send viewport screenshots. It is instructed to use `orient(selection)` for orientation and framing, preserve the camera when reframing is unnecessary, batch related changes, and stop after successful completion rather than refine appearance in repeated rounds. Requests allow at most three command rounds (including structural queries and repairs), followed by a tools-disabled final response describing results and any unfinished work. Longer tasks may need a follow-up request. Active selection markers are cleared after every executed batch; named selections remain available.
+
+Sol uses medium reasoning effort by default. Set `OPENAI_REASONING_EFFORT=low` to try faster responses, with a potential tradeoff in complex-task quality. The command log shows executed commands, results, and errors without timing diagnostics. The direct-confirmation shortcut and streaming Marin playback remain enabled.
+
 ## Requirements
 
 - macOS 10.15 or newer
@@ -44,10 +58,11 @@ The default model is `gpt-5.6-sol`. Set `OPENAI_MODEL` to override it in develop
 
 ## Privacy and security
 
-- Structure files remain local unless the user explicitly requests a viewport inspection; the application never uploads local structure files.
-- Prompt text, compact scene metadata, voice recordings submitted for transcription, and explicitly requested viewport images are sent to OpenAI.
-- Temporary recordings, captures, and structures downloaded through `cmd.fetch` are stored under `~/.pymol-chat` by default.
-- Generated Python is checked before execution. Shell access, general filesystem access, arbitrary networking, and unsafe PyMOL file-command escapes are blocked.
+- The application does not upload local structure files or capture/send viewport screenshots.
+- Prompt text, compact scene metadata, generated commands, and command results are sent to OpenAI. Results may include molecular information such as residue identities, coordinates, distances, or sequences queried from a local structure. Do not use confidential structures unless this disclosure is permitted.
+- Voice recordings are sent to OpenAI for transcription; reply text is sent for Marin speech generation when spoken replies are enabled.
+- Temporary recordings and structures downloaded through `cmd.fetch` are stored under `~/.pymol-chat` by default. Older versions may have left viewport captures there.
+- Generated Python is checked before execution to restrict common shell, filesystem, networking, and unsafe PyMOL command paths. These checks are not an operating-system sandbox. Review important changes and save your PyMOL session before destructive requests.
 - Public structure retrieval through `cmd.fetch` is allowed and redirected to the private application directory.
 
 ## Development
@@ -88,7 +103,7 @@ The resulting installer is written to `outputs/Chat-with-PyMOL-macOS.dmg`.
 - `packaging/` — universal macOS launcher sources
 - `build_dmg.sh` — reproducible DMG build script
 
-The model receives two local tools: direct PyMOL/Python execution and optional viewport inspection. Failed commands are returned to the model for correction, up to an eight-step limit.
+The model receives one local tool: direct PyMOL/Python execution. Failed commands are returned for correction within the three-command-round budget, followed by a tools-disabled final response. Completed execution results are retained in memory if a subsequent network request fails, so the next turn receives that history. This recovery does not persist across quitting PyMOL and does not guarantee that the model will never repeat an action.
 
 ## License
 

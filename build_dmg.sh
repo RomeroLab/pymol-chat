@@ -6,7 +6,7 @@ BUILD_DIR="$PROJECT_DIR/build/portable"
 APP_DIR="$BUILD_DIR/staging/Chat with PyMOL.app"
 CONTENTS="$APP_DIR/Contents"
 RESOURCES="$CONTENTS/Resources"
-OUTPUT="$PROJECT_DIR/outputs/Chat-with-PyMOL-macOS.dmg"
+OUTPUT="${PYMOL_CHAT_DMG_OUTPUT:-$PROJECT_DIR/outputs/Chat-with-PyMOL-macOS.dmg}"
 
 rm -rf "$BUILD_DIR"
 mkdir -p "$CONTENTS/MacOS" "$RESOURCES/voice_helper" "$PROJECT_DIR/outputs"
@@ -19,6 +19,7 @@ find "$RESOURCES/pymol_chat" -type f -name '*.pyc' -delete
 
 cp "$PROJECT_DIR/voice_helper/main.m" "$RESOURCES/voice_helper/main.m"
 cp -R "$PROJECT_DIR/voice_helper/PyMOLChatVoice.app" "$RESOURCES/voice_helper/"
+mkdir -p "$RESOURCES/voice_helper/PyMOLChatVoice.app/Contents/MacOS"
 
 xcrun clang -fobjc-arc -O2 -arch arm64 -arch x86_64 \
   "$PROJECT_DIR/packaging/launcher/main.m" \
