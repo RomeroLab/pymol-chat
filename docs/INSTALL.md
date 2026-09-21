@@ -62,7 +62,7 @@ If microphone access was previously denied:
 
 ## 6. Spoken replies
 
-Replies can be read aloud using Marin, an AI-generated OpenAI voice. This sends reply text to OpenAI and incurs additional API usage. Use **⋯ → Spoken Replies** to mute or enable speech, or **Stop Speaking** to interrupt playback. Starting a new request also stops speech. If Qt audio support is unavailable, written chat remains usable.
+Replies can be read aloud using Marin, an AI-generated OpenAI voice. This sends reply text to OpenAI and incurs additional API usage. Use **⋯ → Spoken Replies** to mute or enable speech. Starting a new request also stops speech. If Qt audio support is unavailable, written chat remains usable.
 
 ## Updating the application
 
