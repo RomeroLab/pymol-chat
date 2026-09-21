@@ -8,6 +8,36 @@ from pymol_chat.executor import PyMOLExecutor
 
 
 class ExecutorTests(unittest.TestCase):
+    def test_deselect_after_success_and_partial_failure(self):
+        for fail in (False, True):
+            with self.subTest(fail=fail):
+                calls = []
+                with (
+                    patch("pymol_chat.executor.cmd.select", side_effect=lambda *args: calls.append("select")),
+                    patch("pymol_chat.executor.cmd.deselect", side_effect=lambda: calls.append("deselect")),
+                ):
+                    code = "cmd.select('site', 'all')"
+                    if fail:
+                        code += "\nraise ValueError('failed')"
+                    result = PyMOLExecutor().execute(code)
+                self.assertEqual(result.ok, not fail)
+                self.assertEqual(calls, ["select", "deselect"])
+                if fail:
+                    self.assertIn("failed", result.error)
+
+    def test_deselect_preserves_named_selections(self):
+        from pymol import cmd
+        try:
+            cmd.pseudoatom("deselect_test_object")
+            result = PyMOLExecutor().execute("cmd.select('deselect_test_site', 'deselect_test_object')")
+            self.assertTrue(result.ok, result.error)
+            self.assertIn("deselect_test_site", cmd.get_names("selections"))
+            self.assertEqual(cmd.count_atoms("deselect_test_site"), 1)
+            self.assertNotIn("deselect_test_site", cmd.get_names("selections", enabled_only=1))
+        finally:
+            cmd.delete("deselect_test_site")
+            cmd.delete("deselect_test_object")
+
     def test_direct_cmd_execution(self):
         calls = []
         with patch("pymol_chat.executor.cmd.color", lambda color, selection: calls.append((color, selection))):
