@@ -56,6 +56,9 @@ int main(int argc, const char *argv[]) {
             ? [NSString stringWithFormat:@"%@:%@", resources, oldPythonPath]
             : resources;
         environment[@"PYMOL_CHAT_PORTABLE"] = @"1";
+        // Keep Python caches outside the signed application bundle by not
+        // writing bytecode. Mutating bundle resources invalidates its seal.
+        environment[@"PYTHONDONTWRITEBYTECODE"] = @"1";
 
         NSTask *task = [[NSTask alloc] init];
         task.executableURL = [NSURL fileURLWithPath:pymol];
