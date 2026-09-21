@@ -31,6 +31,9 @@ class VoiceRecorder(QtCore.QObject):
         super().__init__(parent)
         ensure_app_dirs()
         self.path = APP_DIR / "voice-request.wav"
+        self.stop_path = APP_DIR / "voice-request.stop"
+        self.error_path = APP_DIR / "voice-request.error"
+        self.status_path = APP_DIR / "voice-request.status"
         self.process = QtCore.QProcess(self)
         self.process.finished.connect(self._process_finished)
         self._recording = False
@@ -41,7 +44,7 @@ class VoiceRecorder(QtCore.QObject):
 
     def toggle(self) -> None:
         if self.is_recording:
-            self.process.write(b"stop\n")
+            self.stop_path.touch()
         else:
             self.start()
 
@@ -50,10 +53,16 @@ class VoiceRecorder(QtCore.QObject):
             raise RuntimeError(
                 "The voice helper is not built. Quit PyMOL and run ./run.sh again."
             )
-        if self.path.exists():
-            self.path.unlink()
-        self.process.setProgram(str(HELPER_EXECUTABLE))
-        self.process.setArguments([str(self.path)])
+        for path in (self.path, self.stop_path, self.error_path, self.status_path):
+            path.unlink(missing_ok=True)
+        # Launch the .app through LaunchServices so macOS can attribute the
+        # microphone request to its bundle and display its permission prompt.
+        self.process.setProgram("/usr/bin/open")
+        self.process.setArguments([
+            "-n", "-W", "-a", str(HELPER_EXECUTABLE.parents[2]),
+            "--stdout", str(self.status_path), "--stderr", str(self.error_path),
+            "--args", str(self.path), str(self.stop_path),
+        ])
         self.process.start()
         if not self.process.waitForStarted(3000):
             raise RuntimeError(self.process.errorString() or "Could not start voice recording")
@@ -67,7 +76,10 @@ class VoiceRecorder(QtCore.QObject):
             self.state_changed.emit(False)
 
         stderr = bytes(self.process.readAllStandardError()).decode("utf-8", "replace").strip()
-        if exit_code == 0 and self.path.is_file() and self.path.stat().st_size > 44:
+        if self.error_path.is_file():
+            stderr = self.error_path.read_text(errors="replace").strip() or stderr
+        status = self.status_path.read_text(errors="replace") if self.status_path.is_file() else ""
+        if exit_code == 0 and not stderr and "done" in status.splitlines() and self.path.is_file() and self.path.stat().st_size > 44:
             self.finished.emit(self.path)
             return
         self.finished.emit(None)

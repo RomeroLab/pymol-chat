@@ -13,6 +13,7 @@ from .agent import PyMOLAgent
 from .audio import VoiceRecorder, transcribe
 from .config import api_key
 from .keychain import delete_api_key, read_api_key, save_api_key
+from .speech import SpeechPlayer
 
 
 class TaskSignals(QtCore.QObject):
@@ -156,6 +157,9 @@ class PyMOLChatDock(QtWidgets.QDockWidget):
         self.thread_pool = QtCore.QThreadPool.globalInstance()
         self.agent = None
         self.busy = False
+        self.speech = SpeechPlayer(self)
+        self.speech.error.connect(self.show_error)
+        self.settings = QtCore.QSettings("RomeroLab", "PyMOLChat")
 
         root = DropPanel(self)
         root.setObjectName("pymol_chat_panel")
@@ -206,6 +210,16 @@ class PyMOLChatDock(QtWidgets.QDockWidget):
         self.options_menu = QtWidgets.QMenu(self.menu_button)
         self.key_action = self.options_menu.addAction("API Key Settings…")
         self.key_action.triggered.connect(self.show_key_dialog)
+        self.options_menu.addSeparator()
+        self.speech_action = self.options_menu.addAction("Spoken Replies")
+        self.speech_action.setCheckable(True)
+        self.speech_action.setToolTip("Marin — AI-generated voice from OpenAI; API usage charges apply")
+        self.options_menu.setToolTipsVisible(True)
+        self.speech_action.setChecked(self.settings.value("spoken_replies", True, type=bool))
+        self.speech_action.setEnabled(self.speech.available)
+        self.speech_action.toggled.connect(self._speech_toggled)
+        self.stop_speech_action = self.options_menu.addAction("Stop Speaking")
+        self.stop_speech_action.triggered.connect(self.speech.stop)
         self.options_menu.addSeparator()
         self.debug_action = self.options_menu.addAction("Show Command Log")
         self.debug_action.setCheckable(True)
@@ -346,6 +360,7 @@ class PyMOLChatDock(QtWidgets.QDockWidget):
             return
         if not self._ensure_api_key():
             return
+        self.speech.stop()
         self.input.clear()
         self._append_message("You", text)
         self._set_busy(True)
@@ -363,6 +378,17 @@ class PyMOLChatDock(QtWidgets.QDockWidget):
     def _answer_received(self, answer):
         self._append_message("PyMOL", str(answer))
         self._set_busy(False)
+        if self.speech_action.isChecked() and self.isVisible() and not self.voice.is_recording:
+            self.speech.speak(str(answer))
+
+    def _speech_toggled(self, enabled):
+        self.settings.setValue("spoken_replies", enabled)
+        if not enabled:
+            self.speech.stop()
+
+    def hideEvent(self, event):
+        self.speech.stop()
+        super().hideEvent(event)
 
     def _task_failed(self, message):
         self.show_error(message)
@@ -405,6 +431,7 @@ class PyMOLChatDock(QtWidgets.QDockWidget):
         if not self._ensure_api_key():
             return
         try:
+            self.speech.stop()
             self.voice.toggle()
         except Exception as exc:
             self.show_error(str(exc))

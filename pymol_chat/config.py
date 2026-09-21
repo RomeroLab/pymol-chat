@@ -41,15 +41,15 @@ def load_local_env() -> None:
 
 
 def api_key() -> str:
+    """Prefer the key saved through the app over development configuration."""
     load_local_env()
-    environment_key = os.environ.get("OPENAI_API_KEY", "").strip()
-    if environment_key:
-        return environment_key
     if os.name == "posix":
         from .keychain import read_api_key
 
-        return read_api_key()
-    return ""
+        stored_key = read_api_key().strip()
+        if stored_key:
+            return stored_key
+    return os.environ.get("OPENAI_API_KEY", "").strip()
 
 
 def model() -> str:

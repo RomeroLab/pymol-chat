@@ -175,12 +175,18 @@ class PyMOLExecutor:
                     exec(compiled, namespace, namespace)
             finally:
                 sys.settrace(previous_trace)
+                # Clear selection markers after each batch, including partial
+                # failures, without deleting named selections used in later turns.
+                with contextlib.redirect_stdout(stream), contextlib.redirect_stderr(stream):
+                    cmd.deselect()
             self.locals = {
                 key: value for key, value in namespace.items()
                 if not key.startswith("__") and key not in {"cmd", "math", "statistics"}
             }
             output = stream.getvalue().strip()
-            return ExecutionResult(True, output or "Executed successfully.")
+            # Keep real output distinct from the success flag so silent visual
+            # operations can use the agent's guarded direct confirmation.
+            return ExecutionResult(True, output)
         except Exception as exc:
             message = "".join(traceback.format_exception_only(type(exc), exc)).strip()
             captured = stream.getvalue().strip()
