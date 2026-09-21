@@ -29,7 +29,7 @@ class PluginWindowTests(unittest.TestCase):
             self.assertFalse(dock.debug_view.isVisible())
             self.assertEqual(
                 [action.text() for action in dock.options_menu.actions() if not action.isSeparator()],
-                ["API Key Settings…", "Spoken Replies", "Stop Speaking", "Show Command Log"],
+                ["API Key Settings…", "Spoken Replies", "Show Command Log"],
             )
             self.assertTrue(dock.debug_action.isCheckable())
         finally:
