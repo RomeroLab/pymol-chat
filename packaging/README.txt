@@ -23,3 +23,9 @@ chat panel. A green dot next to the menu indicates that a key is active.
 The launcher contains no API key and requires no Terminal commands or Python
 package installation. API usage is billed to the account associated with the
 configured key.
+
+Spoken replies use Marin, an AI-generated OpenAI voice, with additional API
+usage. Use “⋯ → Spoken Replies” to mute them or “Stop Speaking” to interrupt.
+The application sends prompts, scene metadata, and molecular command results
+to OpenAI, plus microphone recordings for transcription and reply text for
+speech. It does not upload structure files or viewport screenshots.
