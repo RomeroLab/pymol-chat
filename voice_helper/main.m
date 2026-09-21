@@ -212,12 +212,20 @@ int main(int argc, const char *argv[]) {
             RunSelfTest();
             return EXIT_SUCCESS;
         }
-        if (argc != 2) {
-            fprintf(stderr, "Usage: PyMOLChatVoice output.wav\n");
+        if (argc != 2 && argc != 3) {
+            fprintf(stderr, "Usage: PyMOLChatVoice output.wav [stop-file]\n");
             return EXIT_FAILURE;
         }
         Recorder *recorder = [[Recorder alloc] initWithURL:[NSURL fileURLWithPath:@(argv[1])]];
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+        if (argc == 3) {
+            NSString *stopPath = @(argv[2]);
+            [NSTimer scheduledTimerWithTimeInterval:0.1 repeats:YES block:^(NSTimer *timer) {
+                if ([[NSFileManager defaultManager] fileExistsAtPath:stopPath]) {
+                    [timer invalidate];
+                    [recorder stop:@"manual"];
+                }
+            }];
+        } else dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
             NSData *data = [[NSFileHandle fileHandleWithStandardInput] availableData];
             if (data.length > 0) dispatch_async(dispatch_get_main_queue(), ^{ [recorder stop:@"manual"]; });
         });
