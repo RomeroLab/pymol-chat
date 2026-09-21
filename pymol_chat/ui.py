@@ -218,8 +218,6 @@ class PyMOLChatDock(QtWidgets.QDockWidget):
         self.speech_action.setChecked(self.settings.value("spoken_replies", True, type=bool))
         self.speech_action.setEnabled(self.speech.available)
         self.speech_action.toggled.connect(self._speech_toggled)
-        self.stop_speech_action = self.options_menu.addAction("Stop Speaking")
-        self.stop_speech_action.triggered.connect(self.speech.stop)
         self.options_menu.addSeparator()
         self.debug_action = self.options_menu.addAction("Show Command Log")
         self.debug_action.setCheckable(True)
