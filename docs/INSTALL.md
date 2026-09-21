@@ -43,6 +43,8 @@ The application stores the key in your macOS login Keychain. For security, an ac
 
 A green dot beside **⋯** indicates that a key is active. To replace or remove a Keychain key later, open **⋯ → API Key Settings…**.
 
+The dot means a key is loaded, not that OpenAI has validated it. A saved Keychain key takes priority over development environment or `.env` keys. Updating the application does not erase the saved key.
+
 API keys authenticate billed OpenAI API usage. Review usage and billing in the OpenAI Platform account associated with the configured key.
 
 ## 5. Enable voice input
@@ -58,7 +60,11 @@ If microphone access was previously denied:
 3. Enable **PyMOL Chat Voice**.
 4. Restart Chat with PyMOL.
 
-## Updating
+## 6. Spoken replies
+
+Replies can be read aloud using Marin, an AI-generated OpenAI voice. This sends reply text to OpenAI and incurs additional API usage. Use **⋯ → Spoken Replies** to mute or enable speech, or **Stop Speaking** to interrupt playback. Starting a new request also stops speech. If Qt audio support is unavailable, written chat remains usable.
+
+## Updating the application
 
 Download the newer DMG, quit PyMOL, and replace the existing **Chat with PyMOL** application in Applications. The API key remains in Keychain, so it does not normally need to be entered again.
 
@@ -88,4 +94,12 @@ Speak close enough to the selected system microphone, then leave a clear pause. 
 
 ### Inspecting executed commands
 
-Choose **⋯ → Show Command Log** to view generated PyMOL commands, results, corrections, and viewport-capture entries.
+Choose **⋯ → Show Command Log** to view generated PyMOL commands, results, and errors without timing diagnostics. Visual inspection is disabled; the app uses PyMOL commands for framing instead of screenshot/revision loops.
+
+### A key is loaded but requests fail
+
+If OpenAI reports an expired or invalid key, replace it through **⋯ → API Key Settings…**. If the saved key cannot be read after restarting, check macOS Keychain access; the application may fall back to development configuration. Do not share keys or screenshots containing keys when reporting a problem.
+
+### A request stops before all work is finished
+
+Each request permits three command rounds, then a final summary of completed and unfinished work. Ask a follow-up to continue a larger task. If a connection error occurs after the scene changes, ask what completed before repeating a destructive operation; execution results are retained for the next turn in the same session.
