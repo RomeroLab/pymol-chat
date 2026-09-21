@@ -1,6 +1,11 @@
 """Development launcher loaded by PyMOL with `pymol -r launch_plugin.py`."""
 
 import sys
+
+# Also protect the signed bundle when this file is loaded with PyMOL's run
+# command, bypassing the native launcher's environment configuration.
+sys.dont_write_bytecode = True
+
 from pathlib import Path
 
 # PyMOL's `run ..., main` supplies __script__, not the script's __file__.

@@ -37,7 +37,7 @@ Keys saved through **⋯ → API Key Settings** are stored in macOS Keychain and
 
 ### Spoken replies
 
-Replies can be read aloud with **Marin**, an AI-generated OpenAI voice using `gpt-4o-mini-tts`. Reply text is sent to OpenAI for speech generation, with additional API usage charges. Audio streams directly to the speakers without saving a recording, with a 300 ms startup buffer for smoother playback. Turn **⋯ → Spoken Replies** off to mute them, or choose **Stop Speaking** to interrupt a reply. Starting another request or the microphone also stops playback. Your mute preference is remembered. Speech errors leave the written reply available in chat.
+Replies can be read aloud with **Marin**, an AI-generated OpenAI voice using `gpt-4o-mini-tts`. Reply text is sent to OpenAI for speech generation, with additional API usage charges. Audio streams directly to the speakers without saving a recording, with a 300 ms startup buffer for smoother playback. Turn **⋯ → Spoken Replies** off to mute them. Starting another request or the microphone also stops playback. Your mute preference is remembered. Speech errors leave the written reply available in chat.
 
 The previous release, v1.0.0, remains available on the GitHub releases page.
 
