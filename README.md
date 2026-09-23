@@ -18,7 +18,7 @@ The packaged application is the easiest installation method. It supports Apple S
 
 The API key is stored in the macOS login Keychain. It is never embedded in the application or saved in PyMOL session files. A green dot beside the options menu means a key is active.
 
-> This development build is ad-hoc signed. If macOS blocks the first launch, Control-click **Chat with PyMOL**, select **Open**, and confirm. A future Developer ID-signed and notarized release will not require this workaround.
+> The current macOS installer is Developer ID-signed by Philip Romero and notarized by Apple. Open it normally; macOS may show a standard first-launch confirmation and request microphone access. If you downloaded an older installer, download the current release again.
 
 For detailed installation help and troubleshooting, see [docs/INSTALL.md](docs/INSTALL.md).
 
