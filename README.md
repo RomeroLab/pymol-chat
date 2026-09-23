@@ -2,7 +2,9 @@
 
 Chat with PyMOL adds a compact natural-language assistant directly to the PyMOL interface. It can inspect the active session and perform PyMOL operations from typed or spoken requests while keeping the molecular viewer as the main workspace.
 
-![Chat with PyMOL controlling a human hemoglobin structure](docs/images/chat-with-pymol.png)
+Watch Chat with PyMOL explore chymotrypsin using voice commands and spoken responses (sound on).
+
+https://github.com/user-attachments/assets/53dca1be-80e7-41cd-b999-4371dd69a3c7
 
 ## Install on macOS
 
