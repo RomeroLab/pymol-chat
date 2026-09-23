@@ -20,16 +20,11 @@ Open **Applications** in Finder and double-click **Chat with PyMOL**. The launch
 
 If PyMOL is installed somewhere other than `/Applications/PyMOL.app`, the launcher will ask you to locate it. Select the correct `PyMOL.app` and click **Open**.
 
-### If macOS blocks the application
+### macOS security checks
 
-The current build is ad-hoc signed rather than Apple-notarized. If macOS says it cannot verify the developer:
+The current `Chat-with-PyMOL-macOS.dmg` is Developer ID-signed by Philip Romero and notarized by Apple. Open the installed app normally. A standard downloaded-app confirmation and microphone permission request may still appear.
 
-1. Open the Finder **Applications** folder.
-2. Control-click **Chat with PyMOL**.
-3. Choose **Open** from the shortcut menu.
-4. Click **Open** in the confirmation window.
-
-This exception is normally required only once.
+If you see the older warning that Apple cannot check the app for malicious software, download the current installer again from Releases and replace the old application. Organization-managed Macs may have additional restrictions. Do not disable Gatekeeper.
 
 ## 4. Configure an OpenAI API key
 
