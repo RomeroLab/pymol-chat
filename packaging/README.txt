@@ -13,9 +13,13 @@ Install
 4. The chat panel opens at the bottom of PyMOL. Type a request or click the
    microphone once and speak.
 
-If macOS blocks this build, Control-click the application, choose
-Open, and confirm once. A public release should be Developer ID signed and
-notarized so this step is unnecessary.
+Official releases are Developer ID signed and notarized by Apple. Open the
+app normally and allow microphone access when prompted. If macOS cannot
+verify an older copy, download the current release; do not disable Gatekeeper.
+Local development builds are not notarized automatically.
+
+Current installation guide:
+https://github.com/RomeroLab/pymol-chat/blob/main/docs/INSTALL.md
 
 To change or remove the saved key, choose “⋯ → API Key Settings…” in the
 chat panel. A green dot next to the menu indicates that a key is active.
